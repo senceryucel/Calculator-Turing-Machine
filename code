@@ -1,0 +1,111 @@
+; This machine can be tested on Morphett's TM Simulator on http://morphett.info/turing/turing.html
+
+; ⊢ is used as left-end marker.
+
+; initial state (1) is the beginning of the machine to check which operation does the input do.
+; if the operation is comparation, machine goes to state 2.
+; if the operation is addition, machine goes to state 8.
+; if the operation is multiplication, machine goes to state 12.
+; for every input that does not exist in the alphabet, machine goes to halt-reject.
+
+
+1 a a r 1
+1 ⊢ ⊢ r 1
+1 > > l 2
+1 + + l 8
+1 x x l 12
+1 * * * halt-reject
+
+
+
+; multiplier
+; simplified multiplication.
+; the machine writes as many "a"s as there are to the right side of x for each element in left.
+
+
+12 a a l 12
+12 ⊢ ⊢ r 13
+
+13 ⊢ ⊢ r 13
+13 a m r 14
+13 x x r 21
+
+14 a a r 14
+14 x x r 15
+
+15 n n r 15
+15 a n r 16
+15 # # l 19
+
+16 a a r 16
+16 # # r 17
+
+17 a a r 17
+17 _ a l 18
+
+18 a a l 18
+18 # # l 18
+18 n n l 18
+18 x x r 15
+
+19 n a l 19
+19 x x l 20
+
+20 a a l 20
+20 m m r 13
+
+21 a a r 21
+21 # # r 21
+21 x x r 21
+21 _ * * halt
+
+; adder
+; machine writes as many "a"s as there are.
+
+8 + + l 8
+8 a a l 8
+8 $ $ l 8
+8 # # l 8
+8 ⊢ ⊢ r 9
+
+9 $ $ r 9
+9 + + r 9
+9 a $ r 10
+9 # # r 11
+
+10 a a r 10
+10 # # r 10
+10 + + r 10
+10 _ a l 8
+
+11 a a r 11
+11 _ _ * halt
+
+; comparator
+; machine changes every left occurrence of a into $ for corresponding right occurrence of a's.
+; if there is not any left occurence of a left, while there is in right, machine writes 0.
+; otherwise, machine writes 1.
+
+
+2 a a l 2
+2 $ $ l 2
+2 > > l 2
+2 ⊢ ⊢ r 3
+
+
+3 a $ r 4
+3 $ $ r 3
+3 > > * 7
+
+4 a a r 4
+4 > > r 5
+
+5 $ $ r 5
+5 a $ l 2
+5 # # r 6
+
+6 * 1 * halt
+
+7 * * r 7
+7 _ 0 * halt
+
